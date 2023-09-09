@@ -16,7 +16,9 @@ public enum MensagensProdutoExceptions {
     NOME_MENOR_QUE_3_CARACTERES("O nome deve conter no mínimo 3 caracteres."),
     NOME_MAIOR_QUE_150_CARACTERES("O nome deve conter no máximo 150 caracteres."),
     NOME_NULO("O nome não pode ser nulo."),
-    HASH_NULA("O hash não pode ser nulo.");
+    HASH_NULA("O hash não pode ser nulo."),
+    DATA_CRIACAO_JA_ATRIBUIDA("A data de criação já foi atribuída."),
+    HASH_JA_ATRIBUIDO("O hash já foi atribuído.");
 
     public String mensagem;
 

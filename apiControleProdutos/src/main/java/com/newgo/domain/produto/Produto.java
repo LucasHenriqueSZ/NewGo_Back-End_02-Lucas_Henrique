@@ -34,17 +34,13 @@ public class Produto {
         setL_ativo(lativo);
     }
 
-    public Produto(UUID hash, String nome, String descricao, String ean13, BigDecimal preco, int quantidade, int estoque_min, LocalDateTime dtcreate, LocalDateTime dtupdate, boolean lativo) {
-        setHash(hash);
+    public Produto( String nome, String descricao, String ean13, BigDecimal preco, int quantidade, int estoque_min) {
         setNome(nome);
         setDescricao(descricao);
         setEan13(ean13);
         setPreco(preco);
         setQuantidade(quantidade);
         setEstoque_min(estoque_min);
-        setDtcreate(dtcreate);
-        setDtupdate(dtupdate);
-        setL_ativo(lativo);
     }
 
     public long getId() {
@@ -59,7 +55,9 @@ public class Produto {
         return hash;
     }
 
-    private void setHash(UUID hash) {
+    public void setHash(UUID hash) {
+        if (this.hash != null)
+            throw new HashInvalidoException(MensagensProdutoExceptions.HASH_JA_ATRIBUIDO);
         if (hash == null)
             throw new ArgumentoNuloException(MensagensProdutoExceptions.HASH_NULA);
 
@@ -152,7 +150,9 @@ public class Produto {
         return dtcreate;
     }
 
-    private void setDtcreate(LocalDateTime dtcreate) {
+    public void setDtcreate(LocalDateTime dtcreate) {
+        if (this.dtcreate != null)
+            throw new DataInvalidaException(MensagensProdutoExceptions.DATA_CRIACAO_JA_ATRIBUIDA);
         this.dtcreate = dtcreate;
     }
 
