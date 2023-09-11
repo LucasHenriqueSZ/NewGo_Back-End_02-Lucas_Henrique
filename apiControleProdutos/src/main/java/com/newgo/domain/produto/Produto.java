@@ -27,8 +27,8 @@ public class Produto {
         setDescricao(descricao);
         setEan13(ean13);
         setPreco(preco);
-        setQuantidade(quantidade);
         setEstoque_min(estoque_min);
+        setQuantidade(quantidade);
         setDtcreate(dtcreate);
         setDtupdate(dtupdate);
         setL_ativo(lativo);
@@ -75,7 +75,7 @@ public class Produto {
             throw new NomeInvalidoException(MensagensProdutoExceptions.NOME_MAIOR_QUE_150_CARACTERES);
         if (nome.length() < 3)
             throw new NomeInvalidoException(MensagensProdutoExceptions.NOME_MENOR_QUE_3_CARACTERES);
-        if (!nome.matches("^[a-zA-ZÀ-ÿ0-9 ]+$\n"))
+        if (nome.matches("^[a-zA-ZÀ-ÿ0-9 ]+$\n"))
             throw new NomeInvalidoException(MensagensProdutoExceptions.NOME_CARACTERES_INVALIDOS);
 
         this.nome = nome;
@@ -103,7 +103,7 @@ public class Produto {
             throw new ArgumentoNuloException(MensagensProdutoExceptions.EAN13_NULO);
         if (ean13.length() != 13)
             throw new Ean13InvalidoException(MensagensProdutoExceptions.EAN13_DIFERENTE_DE_13_CARACTERES);
-        if (!ean13.matches("^[0-9]+$\n"))
+        if (ean13.matches("^[0-9]+$\n"))
             throw new Ean13InvalidoException(MensagensProdutoExceptions.EAN13_CARACTERES_INVALIDOS);
 
         this.ean13 = ean13;
