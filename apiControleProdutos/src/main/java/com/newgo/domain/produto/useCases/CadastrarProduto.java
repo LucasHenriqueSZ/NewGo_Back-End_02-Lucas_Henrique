@@ -22,13 +22,16 @@ public class CadastrarProduto {
 
         verificaExitenciaProduto(produto);
 
-        produto.setDtcreate(LocalDateTime.now());
-        produto.setHash(UUID.randomUUID());
-        produto.setL_ativo(false);
-        produto.setDtupdate(null);
+        Produto novoProduto = new Produto(produto.getNome(), produto.getDescricao(), produto.getEan13(),
+                produto.getPreco(), produto.getQuantidade(), produto.getEstoque_min());
+
+        novoProduto.setDtcreate(LocalDateTime.now());
+        novoProduto.setHash(UUID.randomUUID());
+        novoProduto.setL_ativo(false);
+        novoProduto.setDtupdate(null);
 
         try {
-            produtoRepository.cadastrar(produto);
+            produtoRepository.cadastrar(novoProduto);
         } catch (Exception e) {
             throw new ProdutoInvalidoException(MensagensCasoDeUsoProdutoExceptions.ERROR_AO_CADASTRAR);
         }
