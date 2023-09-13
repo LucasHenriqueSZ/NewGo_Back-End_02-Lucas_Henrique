@@ -1,10 +1,11 @@
 package com.newgo.domain.produto;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 public interface ProdutoRepository {
 
-    void cadastrar(Produto produto);
+    void cadastrar(Produto produto) throws SQLException;
 
     void atualizar(Produto produto);
 
