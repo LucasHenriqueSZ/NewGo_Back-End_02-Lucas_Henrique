@@ -61,6 +61,17 @@ public class ProdutoController extends HttpServlet {
         }
     }
 
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String hash = req.getParameter("hash");
+        try {
+            LocalizadorDeServico.deletarProduto().executar(hash);
+            resp.setStatus(200);
+        } catch (Exception e) {
+            responderMensagemErro(resp, e);
+        }
+    }
+
     private static String getBodyReqJson(HttpServletRequest req) throws IOException {
         BufferedReader reader = req.getReader();
         StringBuilder requestBody = new StringBuilder();

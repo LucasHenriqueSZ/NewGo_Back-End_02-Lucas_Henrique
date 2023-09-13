@@ -3,6 +3,7 @@ package com.newgo.application.util;
 import com.newgo.domain.produto.ProdutoRepository;
 import com.newgo.domain.produto.useCases.CadastrarProduto;
 import com.newgo.domain.produto.useCases.ConsultarProduto;
+import com.newgo.domain.produto.useCases.DeletarProduto;
 import com.newgo.infrastructure.configs.CarregaProperties;
 import com.newgo.infrastructure.conta.persistencia.ProdutoRepositoryPostgres;
 
@@ -23,6 +24,10 @@ public class LocalizadorDeServico {
 
     public static CadastrarProduto cadastrarProduto() throws SQLException {
         return new CadastrarProduto(produtoRepository());
+    }
+
+    public static DeletarProduto deletarProduto() throws SQLException {
+        return new DeletarProduto(produtoRepository());
     }
 
 
