@@ -17,5 +17,5 @@ public interface ProdutoRepository {
 
     Produto consultarPorNome(String nome);
 
-    void excluir(Produto produto);
+    void excluir(Produto produto) throws SQLException;
 }

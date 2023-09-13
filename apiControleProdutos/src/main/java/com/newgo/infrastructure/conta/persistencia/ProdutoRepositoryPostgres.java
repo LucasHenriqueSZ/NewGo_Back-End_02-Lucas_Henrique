@@ -164,7 +164,19 @@ public class ProdutoRepositoryPostgres implements ProdutoRepository {
     }
 
     @Override
-    public void excluir(Produto produto) {
-        throw new RuntimeException("Não implementado");
+    public void excluir(Produto produto) throws SQLException {
+        PreparedStatement sql = null;
+        try {
+            conexao.setAutoCommit(false);
+            sql = conexao.prepareStatement("DELETE FROM produtos WHERE hash = ?");
+            sql.setObject(1, produto.getHash());
+            sql.execute();
+            conexao.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            conexao.rollback();
+        } finally {
+            sql.close();
+        }
     }
 }
