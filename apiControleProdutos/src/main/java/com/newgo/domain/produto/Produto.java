@@ -20,6 +20,9 @@ public class Produto {
     private LocalDateTime dtupdate;
     private Boolean l_ativo;
 
+    public Produto() {
+    }
+
     public Produto(long id, UUID hash, String nome, String descricao, String ean13, BigDecimal preco, int quantidade, int estoque_min, LocalDateTime dtcreate, LocalDateTime dtupdate, boolean lativo) {
         setId(id);
         setHash(hash);
@@ -39,8 +42,8 @@ public class Produto {
         setDescricao(descricao);
         setEan13(ean13);
         setPreco(preco);
-        setQuantidade(quantidade);
         setEstoque_min(estoque_min);
+        setQuantidade(quantidade);
     }
 
     public long getId() {
@@ -68,7 +71,7 @@ public class Produto {
         return nome;
     }
 
-    private void setNome(String nome) {
+    public void setNome(String nome) {
         if (nome == null || nome.isEmpty())
             throw new ArgumentoNuloException(MensagensProdutoExceptions.NOME_NULO);
         if (nome.length() > 200)
@@ -98,7 +101,7 @@ public class Produto {
         return ean13;
     }
 
-    private void setEan13(String ean13) {
+    public void setEan13(String ean13) {
         if (ean13 == null || ean13.isEmpty())
             throw new ArgumentoNuloException(MensagensProdutoExceptions.EAN13_NULO);
         if (ean13.length() != 13)

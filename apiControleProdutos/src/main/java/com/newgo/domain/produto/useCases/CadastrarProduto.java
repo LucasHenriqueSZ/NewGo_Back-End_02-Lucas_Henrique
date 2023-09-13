@@ -36,7 +36,7 @@ public class CadastrarProduto {
             throw new ProdutoInvalidoException(MensagensCasoDeUsoProdutoExceptions.ERROR_AO_CADASTRAR);
         }
 
-        return produtoRepository.consultarPorHash(produto.getHash());
+        return produtoRepository.consultarPorHash(novoProduto.getHash());
     }
 
     private void verificaExitenciaProduto(Produto produto) {
