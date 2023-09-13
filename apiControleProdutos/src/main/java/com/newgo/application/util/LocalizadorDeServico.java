@@ -1,6 +1,7 @@
 package com.newgo.application.util;
 
 import com.newgo.domain.produto.ProdutoRepository;
+import com.newgo.domain.produto.useCases.CadastrarProduto;
 import com.newgo.domain.produto.useCases.ConsultarProduto;
 import com.newgo.infrastructure.configs.CarregaProperties;
 import com.newgo.infrastructure.conta.persistencia.ProdutoRepositoryPostgres;
@@ -19,6 +20,11 @@ public class LocalizadorDeServico {
     public static ConsultarProduto consultaProduto() throws SQLException {
         return new ConsultarProduto(produtoRepository());
     }
+
+    public static CadastrarProduto cadastrarProduto() throws SQLException {
+        return new CadastrarProduto(produtoRepository());
+    }
+
 
     private static Connection conexao() throws SQLException {
         Properties properties = CarregaProperties.carregarProperties();
