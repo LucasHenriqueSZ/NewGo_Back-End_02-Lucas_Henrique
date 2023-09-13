@@ -7,7 +7,8 @@ public enum MensagensCasoDeUsoProdutoExceptions {
     ERROR_AO_CADASTRAR("Erro ao cadastrar o produto."),
     HASH_INVALIDO("O hash fornecido é inválido."),
     PRODUTO_NAO_ENCONTRADO("O produto não foi encontrado."),
-    ERROR_AO_CONSULTAR("Erro ao consultar o produto.");
+    ERROR_AO_CONSULTAR("Erro ao consultar o produto."),
+    ERROR_AO_DELETAR("Erro ao deletar o produto.");
 
     public String mensagem;
 
