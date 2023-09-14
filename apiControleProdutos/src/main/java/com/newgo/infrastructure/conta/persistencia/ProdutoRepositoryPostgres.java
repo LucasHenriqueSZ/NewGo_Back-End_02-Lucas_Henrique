@@ -49,8 +49,29 @@ public class ProdutoRepositoryPostgres implements ProdutoRepository {
     }
 
     @Override
-    public void atualizar(Produto produto) {
-        throw new RuntimeException("Não implementado");
+    public void atualizar(Produto produto) throws SQLException {
+        PreparedStatement sql = null;
+        try {
+            conexao.setAutoCommit(false);
+            sql = conexao.prepareStatement(
+                    "UPDATE produtos SET  descricao = ?, preco = ?, quantidade = ?," +
+                            " estoque_min = ?, dtupdate = ? WHERE hash = ?");
+
+            sql.setString(1, produto.getDescricao());
+            sql.setDouble(2, produto.getPreco().doubleValue());
+            sql.setInt(3, produto.getQuantidade());
+            sql.setInt(4, produto.getEstoque_min());
+            sql.setObject(5, produto.getDtupdate());
+            sql.setObject(6, produto.getHash());
+
+            sql.execute();
+            conexao.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            conexao.rollback();
+        } finally {
+            sql.close();
+        }
     }
 
     @Override

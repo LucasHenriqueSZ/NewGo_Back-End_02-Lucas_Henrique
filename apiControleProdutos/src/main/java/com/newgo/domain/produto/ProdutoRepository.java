@@ -7,7 +7,7 @@ public interface ProdutoRepository {
 
     void cadastrar(Produto produto) throws SQLException;
 
-    void atualizar(Produto produto);
+    void atualizar(Produto produto) throws SQLException;
 
     Produto consultarPorEan13(String ean13);
 
