@@ -1,0 +1,141 @@
+{
+	"info": {
+		"_postman_id": "1d4cd50d-10b2-4016-9f68-2ef7295447b2",
+		"name": "api-rest-produtos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29461894"
+	},
+	"item": [
+		{
+			"name": "get-produto-hash",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/produto?hash=a12b34c5-6789-0123-d45e-67890f123456",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"produto"
+					],
+					"query": [
+						{
+							"key": "hash",
+							"value": "a12b34c5-6789-0123-d45e-67890f123456"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-produto-hash",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nome\": \"Produto H\",\r\n    \"descricao\": \"Descrição do Produto h\",\r\n    \"ean13\": \"7257755690773\",\r\n    \"preco\": 150,\r\n    \"quantidade\": 20,\r\n    \"estoque_min\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/produto",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"produto"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-produto-hash Copy",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"descricao\": \"Descrição do Produto atualizado\",\r\n    \"preco\": 15.99,\r\n    \"quantidade\": 2,\r\n    \"estoque_min\": 15\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/produto?hash=3f3e87ce-3a1d-4a4f-92e2-7f1531e2e8a9",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"produto"
+					],
+					"query": [
+						{
+							"key": "hash",
+							"value": "3f3e87ce-3a1d-4a4f-92e2-7f1531e2e8a9"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-produto-hash",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/produto?hash=c9338de6-00e8-4481-9359-0f3c57d83930",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"produto"
+					],
+					"query": [
+						{
+							"key": "hash",
+							"value": "c9338de6-00e8-4481-9359-0f3c57d83930"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "localhost:8080",
+			"type": "string"
+		}
+	]
+}
