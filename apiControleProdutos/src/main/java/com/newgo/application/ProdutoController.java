@@ -1,5 +1,6 @@
 package com.newgo.application;
 
+import com.newgo.application.dto.Produto.AtualizaProdutoDto;
 import com.newgo.application.dto.Produto.CadastroProdutoDto;
 import com.newgo.application.dto.Produto.RespostaProdutoDto;
 import com.newgo.application.dto.RespostaExceptionDto;
@@ -67,6 +68,31 @@ public class ProdutoController extends HttpServlet {
         try {
             LocalizadorDeServico.deletarProduto().executar(hash);
             resp.setStatus(200);
+        } catch (Exception e) {
+            responderMensagemErro(resp, e);
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String hash = req.getParameter("hash");
+        try {
+            String requestBody = getBodyReqJson(req);
+
+            AtualizaProdutoDto atualizaProdutoDto = ConversorJson.converterParaObjeto(
+                    requestBody, AtualizaProdutoDto.class);
+
+            Produto produto = Mapper.parseObject(atualizaProdutoDto, Produto.class);
+
+            Produto produtoAtualizado = LocalizadorDeServico.atualizarProduto().executar(hash,produto);
+
+            RespostaProdutoDto respostaProdutoDto = Mapper.parseObject(produtoAtualizado, RespostaProdutoDto.class);
+
+            String json = ConversorJson.converterToJson(respostaProdutoDto);
+
+            resp.setContentType("application/json");
+            resp.setStatus(200);
+            resp.getWriter().write(json);
         } catch (Exception e) {
             responderMensagemErro(resp, e);
         }
