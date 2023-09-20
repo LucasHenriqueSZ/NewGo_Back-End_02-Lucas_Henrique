@@ -20,7 +20,7 @@ public class ParserURL {
     }
 
     private void processarRecurso() {
-        Pattern regex = Pattern.compile("\\/produtos\\/([a-f0-9\\-]+)");
+        Pattern regex = Pattern.compile("^\\/produtos(?:\\/([a-f0-9\\-]+))?$");
         Matcher matcher = regex.matcher(recurso);
         encontrado = matcher.find();
 
