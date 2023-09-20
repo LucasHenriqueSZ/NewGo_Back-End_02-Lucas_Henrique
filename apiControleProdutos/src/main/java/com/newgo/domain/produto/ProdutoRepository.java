@@ -1,6 +1,7 @@
 package com.newgo.domain.produto;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 
 public interface ProdutoRepository {
@@ -18,4 +19,6 @@ public interface ProdutoRepository {
     Produto consultarPorNome(String nome);
 
     void excluir(Produto produto) throws SQLException;
+
+    List<Produto> consultarTodos();
 }

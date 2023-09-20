@@ -18,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @WebServlet("/produtos/*")
 public class ProdutoController extends HttpServlet {
@@ -33,15 +34,27 @@ public class ProdutoController extends HttpServlet {
             return;
         }
 
-        if(parserURL.endpointProdutoEspecifico())
+        if (parserURL.endpointProdutoEspecifico())
             buscarProdutoEspecifico(parserURL.getHashProduto(), resp);
 
-        if(parserURL.endpointProdutos())
+        if (parserURL.endpointProdutos())
             buscarProdutos(resp);
     }
 
-    private void buscarProdutos(HttpServletResponse resp) {
-        // TODO Auto-generated method stub
+    private void buscarProdutos(HttpServletResponse resp) throws IOException {
+        try {
+            List<Produto> produtos = LocalizadorDeServico.consultarTodosProdutos().executar();
+
+            List<RespostaProdutoDto> produtosDto = Mapper.parseListObjects(produtos, RespostaProdutoDto.class);
+
+            String json = ConversorJson.converterToJson(produtosDto);
+
+            resp.setContentType("application/json");
+            resp.setStatus(200);
+            resp.getWriter().write(json);
+        } catch (Exception e) {
+            responderMensagemErro(resp, e, 400);
+        }
     }
 
     private static void buscarProdutoEspecifico(String hash, HttpServletResponse resp) throws IOException {
@@ -106,7 +119,7 @@ public class ProdutoController extends HttpServlet {
 
             Produto produto = Mapper.parseObject(atualizaProdutoDto, Produto.class);
 
-            Produto produtoAtualizado = LocalizadorDeServico.atualizarProduto().executar(parserURL.getHashProduto(),produto);
+            Produto produtoAtualizado = LocalizadorDeServico.atualizarProduto().executar(parserURL.getHashProduto(), produto);
 
             RespostaProdutoDto respostaProdutoDto = Mapper.parseObject(produtoAtualizado, RespostaProdutoDto.class);
 

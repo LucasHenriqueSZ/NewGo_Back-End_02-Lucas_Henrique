@@ -6,6 +6,8 @@ import com.newgo.domain.produto.ProdutoRepository;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class ProdutoRepositoryPostgres implements ProdutoRepository {
@@ -198,6 +200,41 @@ public class ProdutoRepositoryPostgres implements ProdutoRepository {
             conexao.rollback();
         } finally {
             sql.close();
+        }
+    }
+
+    @Override
+    public List<Produto> consultarTodos() {
+        PreparedStatement sql = null;
+        try {
+            sql = conexao.prepareStatement("SELECT 	* FROM 	produtos");
+            ResultSet rs = sql.executeQuery();
+            List<Produto> produtos = new ArrayList<>();
+            while (rs.next()) {
+                Timestamp timestamp = rs.getTimestamp("dtupdate");
+                LocalDateTime dtupdate = (timestamp != null) ? timestamp.toLocalDateTime() : null;
+
+                Produto produto = new Produto(
+                        rs.getLong("id"),
+                        UUID.fromString(rs.getString("hash")),
+                        rs.getString("nome"),
+                        rs.getString("descricao"),
+                        rs.getString("ean13"),
+                        BigDecimal.valueOf(rs.getDouble("preco")),
+                        rs.getInt("quantidade"),
+                        rs.getInt("estoque_min"),
+                        rs.getTimestamp("dtcreate").toLocalDateTime(),
+                        dtupdate,
+                        rs.getBoolean("l_ativo")
+                );
+                produtos.add(produto);
+            }
+
+            rs.close();
+            sql.close();
+            return produtos;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

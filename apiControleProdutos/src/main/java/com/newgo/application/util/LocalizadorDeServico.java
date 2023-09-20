@@ -1,10 +1,7 @@
 package com.newgo.application.util;
 
 import com.newgo.domain.produto.ProdutoRepository;
-import com.newgo.domain.produto.useCases.AtualizarProduto;
-import com.newgo.domain.produto.useCases.CadastrarProduto;
-import com.newgo.domain.produto.useCases.ConsultarProduto;
-import com.newgo.domain.produto.useCases.DeletarProduto;
+import com.newgo.domain.produto.useCases.*;
 import com.newgo.infrastructure.configs.CarregaProperties;
 import com.newgo.infrastructure.conta.persistencia.ProdutoRepositoryPostgres;
 
@@ -15,6 +12,9 @@ import java.util.Properties;
 
 public class LocalizadorDeServico {
 
+    public static ConsultarTodosProdutos consultarTodosProdutos() throws SQLException {
+        return new ConsultarTodosProdutos(produtoRepository());
+    }
 
     public static ParserURL parserURL(String recurso) {
         return new ParserURL(recurso);
