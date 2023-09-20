@@ -15,6 +15,11 @@ import java.util.Properties;
 
 public class LocalizadorDeServico {
 
+
+    public static ParserURL parserURL(String recurso) {
+        return new ParserURL(recurso);
+    }
+
     private static ProdutoRepository produtoRepository() throws SQLException {
         return new ProdutoRepositoryPostgres(conexao());
     }
