@@ -114,7 +114,7 @@ public class ProdutoController extends HttpServlet {
             }
 
             if (parserProdutoURL.endpointProdutoEspecifico()) {
-                deletarProduto(parserProdutoURL, resp);
+                deletarProduto(parserProdutoURL.getHashProduto(), resp);
                 return;
             }
 
@@ -124,8 +124,8 @@ public class ProdutoController extends HttpServlet {
         }
     }
 
-    private void deletarProduto(ParserProdutoURL parserProdutoURL, HttpServletResponse resp) throws SQLException, IOException {
-        LocalizadorDeServico.deletarProduto().executar(parserProdutoURL.getHashProduto());
+    private void deletarProduto(String hashProduto, HttpServletResponse resp) throws SQLException, IOException {
+        LocalizadorDeServico.deletarProduto().executar(hashProduto);
         escreverResposta(resp, null, 200);
     }
 
@@ -225,6 +225,6 @@ public class ProdutoController extends HttpServlet {
         resp.setContentType("application/json");
         resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
         resp.setStatus(codigo);
-        resp.getWriter().write(json);
+        resp.getWriter().write((json != null ? json : ""));
     }
 }
