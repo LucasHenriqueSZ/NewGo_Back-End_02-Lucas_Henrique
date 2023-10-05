@@ -4,6 +4,7 @@ import com.newgo.domain.produto.Produto;
 import com.newgo.domain.produto.ProdutoRepository;
 import com.newgo.domain.produto.useCases.exceptions.DeletarProdutoException;
 import com.newgo.domain.produto.useCases.exceptions.MensagensCasoDeUsoProdutoExceptions;
+import com.newgo.domain.produto.useCases.util.ConversorUUID;
 
 import java.util.UUID;
 
@@ -16,7 +17,7 @@ public class DeletarProduto {
     }
 
     public void executar(String hash) {
-        UUID uuid = converteStringParaUUID(hash);
+        UUID uuid = ConversorUUID.converteStringParaUUID(hash);
         try {
             Produto produto = produtoRepository.consultarPorHash(uuid);
             if (produto == null)
@@ -28,15 +29,6 @@ public class DeletarProduto {
             throw e;
         } catch (Exception e) {
             throw new DeletarProdutoException(MensagensCasoDeUsoProdutoExceptions.ERROR_AO_DELETAR);
-        }
-    }
-
-
-    private UUID converteStringParaUUID(String hash) {
-        try {
-            return UUID.fromString(hash);
-        } catch (Exception e) {
-            throw new DeletarProdutoException(MensagensCasoDeUsoProdutoExceptions.HASH_INVALIDO);
         }
     }
 

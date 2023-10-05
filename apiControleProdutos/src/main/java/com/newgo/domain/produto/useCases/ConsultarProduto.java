@@ -4,6 +4,7 @@ import com.newgo.domain.produto.Produto;
 import com.newgo.domain.produto.ProdutoRepository;
 import com.newgo.domain.produto.useCases.exceptions.ConsultaProdutoException;
 import com.newgo.domain.produto.useCases.exceptions.MensagensCasoDeUsoProdutoExceptions;
+import com.newgo.domain.produto.useCases.util.ConversorUUID;
 
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ public class ConsultarProduto {
         if (hash == null || hash.isEmpty())
             throw new ConsultaProdutoException(MensagensCasoDeUsoProdutoExceptions.HASH_INVALIDO);
 
-        UUID uuid = converteStringParaUUID(hash);
+        UUID uuid = ConversorUUID.converteStringParaUUID(hash);
 
         Produto produto = realizaConsulta(uuid);
 
@@ -36,13 +37,5 @@ public class ConsultarProduto {
             throw new ConsultaProdutoException(MensagensCasoDeUsoProdutoExceptions.ERROR_AO_CONSULTAR);
         }
         return produto;
-    }
-
-    private UUID converteStringParaUUID(String hash) {
-        try {
-            return UUID.fromString(hash);
-        } catch (Exception e) {
-            throw new ConsultaProdutoException(MensagensCasoDeUsoProdutoExceptions.HASH_INVALIDO);
-        }
     }
 }
