@@ -4,6 +4,7 @@ import com.newgo.domain.produto.Produto;
 import com.newgo.domain.produto.ProdutoRepository;
 import com.newgo.domain.produto.useCases.exceptions.AtualizarProdutoException;
 import com.newgo.domain.produto.useCases.exceptions.MensagensCasoDeUsoProdutoExceptions;
+import com.newgo.domain.produto.useCases.util.ConversorUUID;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -20,7 +21,7 @@ public class AtualizarProduto {
         if (produto == null)
             throw new AtualizarProdutoException(MensagensCasoDeUsoProdutoExceptions.NOVOS_DADOS_DO_PRODUTO_INVALIDOS);
 
-        verificarProdutoAtivo(converteStringParaUUID(hash));
+        verificarProdutoAtivo(ConversorUUID.converteStringParaUUID(hash));
 
         Produto produtoAtualizado = getProdutoAtualizado(hash, produto);
 
@@ -31,7 +32,7 @@ public class AtualizarProduto {
         }
 
         try {
-            return produtoRepository.consultarPorHash(converteStringParaUUID(hash));
+            return produtoRepository.consultarPorHash(ConversorUUID.converteStringParaUUID(hash));
         } catch (Exception e) {
             throw new AtualizarProdutoException(MensagensCasoDeUsoProdutoExceptions.ERROR_AO_CONSULTAR);
         }
@@ -39,7 +40,7 @@ public class AtualizarProduto {
 
     private Produto getProdutoAtualizado(String hash, Produto produto) {
         Produto produtoAtualizado = new Produto();
-        produtoAtualizado.setHash(converteStringParaUUID(hash));
+        produtoAtualizado.setHash(ConversorUUID.converteStringParaUUID(hash));
         produtoAtualizado.setDescricao(produto.getDescricao());
         produtoAtualizado.setPreco(produto.getPreco());
         produtoAtualizado.setEstoque_min(produto.getEstoque_min());
@@ -60,14 +61,6 @@ public class AtualizarProduto {
             throw e;
         } catch (Exception e) {
             throw new AtualizarProdutoException(MensagensCasoDeUsoProdutoExceptions.ERROR_AO_CONSULTAR);
-        }
-    }
-
-    private UUID converteStringParaUUID(String hash) {
-        try {
-            return UUID.fromString(hash);
-        } catch (Exception e) {
-            throw new AtualizarProdutoException(MensagensCasoDeUsoProdutoExceptions.HASH_INVALIDO);
         }
     }
 

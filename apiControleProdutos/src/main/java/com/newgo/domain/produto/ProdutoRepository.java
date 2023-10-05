@@ -10,6 +10,8 @@ public interface ProdutoRepository {
 
     void atualizar(Produto produto) throws SQLException;
 
+    void atualizarStatus(Produto produto) throws SQLException;
+
     Produto consultarPorEan13(String ean13);
 
     Produto consultarPorId(Long id);

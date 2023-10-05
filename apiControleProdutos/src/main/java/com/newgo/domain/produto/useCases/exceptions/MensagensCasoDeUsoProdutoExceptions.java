@@ -11,7 +11,8 @@ public enum MensagensCasoDeUsoProdutoExceptions {
     ERROR_AO_DELETAR("Erro ao deletar o produto."),
     NOVOS_DADOS_DO_PRODUTO_INVALIDOS("Os novos dados do produto são inválidos."),
     ERROR_AO_ATUALIZAR("Erro ao atualizar o produto."),
-    PRODUTO_INATIVO("O produto está inativo.");
+    PRODUTO_INATIVO("O produto está inativo."),
+    STATUS_PRODUTO_INVALIDO("O status do produto é inválido.");
 
     public String mensagem;
 

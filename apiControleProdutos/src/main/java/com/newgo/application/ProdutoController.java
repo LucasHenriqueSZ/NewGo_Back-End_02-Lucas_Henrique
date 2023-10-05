@@ -6,7 +6,7 @@ import com.newgo.application.dto.Produto.RespostaProdutoDto;
 import com.newgo.application.dto.RespostaExceptionDto;
 import com.newgo.application.mappers.Mapper;
 import com.newgo.application.util.LocalizadorDeServico;
-import com.newgo.application.util.ParserURL;
+import com.newgo.application.util.ParserProdutoURL;
 import com.newgo.application.util.json.ConversorJson;
 import com.newgo.domain.produto.Produto;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,20 +26,107 @@ public class ProdutoController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String recurso = req.getRequestURI().substring(req.getContextPath().length());
+        try {
+            resp.setContentType("application/json");
+            String recurso = req.getRequestURI().substring(req.getContextPath().length());
 
-        ParserURL parserURL = LocalizadorDeServico.parserURL(recurso);
+            ParserProdutoURL parserProdutoURL = LocalizadorDeServico.parserURL(recurso);
 
-        if (!parserURL.encontrado()) {
+            if (!parserProdutoURL.encontrado()) {
+                responderMensagemErro(resp, new Exception("Recurso não encontrado"), 404);
+                return;
+            }
+
+            if (parserProdutoURL.endpointProdutoEspecifico()) {
+                buscarProdutoEspecifico(parserProdutoURL.getHashProduto(), resp);
+                return;
+            }
+
+            if (parserProdutoURL.endpointProdutos()) {
+                buscarProdutos(resp);
+                return;
+            }
+
             responderMensagemErro(resp, new Exception("Recurso não encontrado"), 404);
-            return;
+        } catch (Exception e) {
+            responderMensagemErro(resp, e, 400);
         }
+    }
 
-        if (parserURL.endpointProdutoEspecifico())
-            buscarProdutoEspecifico(parserURL.getHashProduto(), resp);
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        try {
+            String recurso = req.getRequestURI().substring(req.getContextPath().length());
 
-        if (parserURL.endpointProdutos())
-            buscarProdutos(resp);
+            ParserProdutoURL parserProdutoURL = LocalizadorDeServico.parserURL(recurso);
+
+            if (!parserProdutoURL.encontrado()) {
+                responderMensagemErro(resp, new Exception("Recurso não encontrado"), 404);
+                return;
+            }
+
+
+            if (parserProdutoURL.endpointProdutos()) {
+                cadastratProduto(req, resp);
+                return;
+            }
+
+            responderMensagemErro(resp, new Exception("Recurso não encontrado"), 404);
+        } catch (Exception e) {
+            responderMensagemErro(resp, e, 400);
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        try {
+            ParserProdutoURL parserProdutoURL = LocalizadorDeServico.parserURL(req.getRequestURI().substring(req.getContextPath().length()));
+
+            if (!parserProdutoURL.encontrado()) {
+                responderMensagemErro(resp, new Exception("Recurso não encontrado"), 404);
+                return;
+            }
+
+            if (parserProdutoURL.endpointProdutoEspecifico()) {
+                atualizarProduto(req, resp, parserProdutoURL.getHashProduto());
+                return;
+            }
+
+            if (parserProdutoURL.endpointAlterarStatusProduto()) {
+                alterarStatusProduto(parserProdutoURL.getHashProduto(), parserProdutoURL.getStatusProduto(), resp);
+                return;
+            }
+
+            responderMensagemErro(resp, new Exception("Recurso não encontrado"), 404);
+        } catch (Exception e) {
+            responderMensagemErro(resp, e, 400);
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        try {
+            ParserProdutoURL parserProdutoURL = LocalizadorDeServico.parserURL(req.getRequestURI().substring(req.getContextPath().length()));
+
+            if (!parserProdutoURL.encontrado()) {
+                responderMensagemErro(resp, new Exception("Recurso não encontrado"), 404);
+                return;
+            }
+
+            if (parserProdutoURL.endpointProdutoEspecifico()) {
+                deletarProduto(parserProdutoURL.getHashProduto(), resp);
+                return;
+            }
+
+            responderMensagemErro(resp, new Exception("Recurso não encontrado"), 404);
+        } catch (Exception e) {
+            responderMensagemErro(resp, e, 404);
+        }
+    }
+
+    private void deletarProduto(String hashProduto, HttpServletResponse resp) throws SQLException, IOException {
+        LocalizadorDeServico.deletarProduto().executar(hashProduto);
+        escreverResposta(resp, null, 200);
     }
 
     private void buscarProdutos(HttpServletResponse resp) throws IOException {
@@ -49,88 +137,70 @@ public class ProdutoController extends HttpServlet {
 
             String json = ConversorJson.converterToJson(produtosDto);
 
-            resp.setContentType("application/json");
-            resp.setStatus(200);
-            resp.getWriter().write(json);
+            escreverResposta(resp, json, 200);
         } catch (Exception e) {
             responderMensagemErro(resp, e, 400);
         }
     }
 
-    private static void buscarProdutoEspecifico(String hash, HttpServletResponse resp) throws IOException {
+    private void buscarProdutoEspecifico(String hash, HttpServletResponse resp) throws IOException {
         try {
             Produto produto = LocalizadorDeServico.consultaProduto().executar(hash);
             RespostaProdutoDto produtoDto = Mapper.parseObject(produto, RespostaProdutoDto.class);
 
             String json = ConversorJson.converterToJson(produtoDto);
 
-            resp.setContentType("application/json");
-            resp.setStatus(200);
-            resp.getWriter().write(json);
+            escreverResposta(resp, json, 200);
         } catch (Exception e) {
             responderMensagemErro(resp, e, 404);
         }
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void alterarStatusProduto(String hashProduto, String statusProduto, HttpServletResponse resp) throws IOException {
         try {
-            String requestBody = getBodyReqJson(req);
-
-            CadastroProdutoDto cadastroProdutoDto = ConversorJson.converterParaObjeto(
-                    requestBody, CadastroProdutoDto.class);
-
-            Produto produto = Mapper.parseObject(cadastroProdutoDto, Produto.class);
-
-            Produto produtoCadastrado = LocalizadorDeServico.cadastrarProduto().executar(produto);
-
-            RespostaProdutoDto respostaProdutoDto = Mapper.parseObject(produtoCadastrado, RespostaProdutoDto.class);
+            Produto produto = LocalizadorDeServico.alterarStatusProduto().executar(hashProduto, statusProduto);
+            RespostaProdutoDto respostaProdutoDto = Mapper.parseObject(produto, RespostaProdutoDto.class);
 
             String json = ConversorJson.converterToJson(respostaProdutoDto);
 
-            resp.setContentType("application/json");
-            resp.setStatus(201);
-            resp.getWriter().write(json);
-        } catch (Exception e) {
-            responderMensagemErro(resp, e, 400);
-        }
-    }
-
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        try {
-            ParserURL parserURL = LocalizadorDeServico.parserURL(req.getRequestURI().substring(req.getContextPath().length()));
-            LocalizadorDeServico.deletarProduto().executar(parserURL.getHashProduto());
-            resp.setStatus(200);
+            escreverResposta(resp, json, 200);
         } catch (Exception e) {
             responderMensagemErro(resp, e, 404);
         }
     }
 
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        try {
-            ParserURL parserURL = LocalizadorDeServico.parserURL(req.getRequestURI().substring(req.getContextPath().length()));
+    private void cadastratProduto(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        String requestBody = getBodyReqJson(req);
 
-            String requestBody = getBodyReqJson(req);
+        CadastroProdutoDto cadastroProdutoDto = ConversorJson.converterParaObjeto(
+                requestBody, CadastroProdutoDto.class);
 
-            AtualizaProdutoDto atualizaProdutoDto = ConversorJson.converterParaObjeto(
-                    requestBody, AtualizaProdutoDto.class);
+        Produto produto = Mapper.parseObject(cadastroProdutoDto, Produto.class);
 
-            Produto produto = Mapper.parseObject(atualizaProdutoDto, Produto.class);
+        Produto produtoCadastrado = LocalizadorDeServico.cadastrarProduto().executar(produto);
 
-            Produto produtoAtualizado = LocalizadorDeServico.atualizarProduto().executar(parserURL.getHashProduto(), produto);
+        RespostaProdutoDto respostaProdutoDto = Mapper.parseObject(produtoCadastrado, RespostaProdutoDto.class);
 
-            RespostaProdutoDto respostaProdutoDto = Mapper.parseObject(produtoAtualizado, RespostaProdutoDto.class);
+        String json = ConversorJson.converterToJson(respostaProdutoDto);
 
-            String json = ConversorJson.converterToJson(respostaProdutoDto);
+        escreverResposta(resp, json, 201);
+    }
 
-            resp.setContentType("application/json");
-            resp.setStatus(200);
-            resp.getWriter().write(json);
-        } catch (Exception e) {
-            responderMensagemErro(resp, e, 400);
-        }
+    private void atualizarProduto(HttpServletRequest req, HttpServletResponse resp, String hashProduto) throws Exception {
+        String requestBody = getBodyReqJson(req);
+
+        AtualizaProdutoDto atualizaProdutoDto = ConversorJson.converterParaObjeto(
+                requestBody, AtualizaProdutoDto.class);
+
+        Produto produto = Mapper.parseObject(atualizaProdutoDto, Produto.class);
+
+        Produto produtoAtualizado = LocalizadorDeServico.atualizarProduto().executar(hashProduto, produto);
+
+        RespostaProdutoDto respostaProdutoDto = Mapper.parseObject(produtoAtualizado, RespostaProdutoDto.class);
+
+        String json = ConversorJson.converterToJson(respostaProdutoDto);
+
+        escreverResposta(resp, json, 200);
     }
 
     private static String getBodyReqJson(HttpServletRequest req) throws IOException {
@@ -149,5 +219,12 @@ public class ProdutoController extends HttpServlet {
         resp.setContentType("application/json");
         resp.setStatus(codigo);
         resp.getWriter().write(json);
+    }
+
+    private static void escreverResposta(HttpServletResponse resp, String json, int codigo) throws IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        resp.setStatus(codigo);
+        resp.getWriter().write((json != null ? json : ""));
     }
 }
