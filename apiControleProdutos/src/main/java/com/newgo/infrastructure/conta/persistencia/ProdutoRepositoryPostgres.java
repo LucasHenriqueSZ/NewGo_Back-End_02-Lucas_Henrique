@@ -77,6 +77,28 @@ public class ProdutoRepositoryPostgres implements ProdutoRepository {
     }
 
     @Override
+    public void atualizarStatus(Produto produto) throws SQLException {
+        PreparedStatement sql = null;
+        try {
+            conexao.setAutoCommit(false);
+            sql = conexao.prepareStatement(
+                    "UPDATE produtos SET  l_ativo = ?, dtupdate = ? WHERE hash = ?");
+
+            sql.setBoolean(1, produto.isL_ativo());
+            sql.setObject(2, produto.getDtupdate());
+            sql.setObject(3, produto.getHash());
+
+            sql.execute();
+            conexao.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            conexao.rollback();
+        } finally {
+            sql.close();
+        }
+    }
+
+    @Override
     public Produto consultarPorEan13(String ean13) {
         PreparedStatement sql = null;
         try {
