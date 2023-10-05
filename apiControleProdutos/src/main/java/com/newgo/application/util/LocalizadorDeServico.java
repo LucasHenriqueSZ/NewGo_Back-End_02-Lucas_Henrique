@@ -12,12 +12,16 @@ import java.util.Properties;
 
 public class LocalizadorDeServico {
 
+    public static AlterarStatusProduto alterarStatusProduto() throws SQLException {
+        return new AlterarStatusProduto(produtoRepository());
+    }
+
     public static ConsultarTodosProdutos consultarTodosProdutos() throws SQLException {
         return new ConsultarTodosProdutos(produtoRepository());
     }
 
-    public static ParserURL parserURL(String recurso) {
-        return new ParserURL(recurso);
+    public static ParserProdutoURL parserURL(String recurso) {
+        return new ParserProdutoURL(recurso);
     }
 
     private static ProdutoRepository produtoRepository() throws SQLException {
