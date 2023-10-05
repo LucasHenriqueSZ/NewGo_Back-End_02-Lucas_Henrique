@@ -143,7 +143,7 @@ public class ProdutoController extends HttpServlet {
         }
     }
 
-    private static void buscarProdutoEspecifico(String hash, HttpServletResponse resp) throws IOException {
+    private void buscarProdutoEspecifico(String hash, HttpServletResponse resp) throws IOException {
         try {
             Produto produto = LocalizadorDeServico.consultaProduto().executar(hash);
             RespostaProdutoDto produtoDto = Mapper.parseObject(produto, RespostaProdutoDto.class);
@@ -169,7 +169,7 @@ public class ProdutoController extends HttpServlet {
         }
     }
 
-    private static void cadastratProduto(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    private void cadastratProduto(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String requestBody = getBodyReqJson(req);
 
         CadastroProdutoDto cadastroProdutoDto = ConversorJson.converterParaObjeto(
@@ -186,7 +186,7 @@ public class ProdutoController extends HttpServlet {
         escreverResposta(resp, json, 201);
     }
 
-    private static void atualizarProduto(HttpServletRequest req, HttpServletResponse resp, String hashProduto) throws Exception {
+    private void atualizarProduto(HttpServletRequest req, HttpServletResponse resp, String hashProduto) throws Exception {
         String requestBody = getBodyReqJson(req);
 
         AtualizaProdutoDto atualizaProdutoDto = ConversorJson.converterParaObjeto(
