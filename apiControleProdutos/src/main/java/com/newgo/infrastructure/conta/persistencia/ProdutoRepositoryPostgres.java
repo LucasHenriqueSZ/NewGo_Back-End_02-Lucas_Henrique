@@ -259,4 +259,40 @@ public class ProdutoRepositoryPostgres implements ProdutoRepository {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public List<Produto> consultarTodosPorStatus(boolean statusProduto) {
+        PreparedStatement sql = null;
+        try {
+            sql = conexao.prepareStatement("SELECT 	* FROM 	produtos WHERE l_ativo = ?");
+            sql.setBoolean(1, statusProduto);
+            ResultSet rs = sql.executeQuery();
+            List<Produto> produtos = new ArrayList<>();
+            while (rs.next()) {
+                Timestamp timestamp = rs.getTimestamp("dtupdate");
+                LocalDateTime dtupdate = (timestamp != null) ? timestamp.toLocalDateTime() : null;
+
+                Produto produto = new Produto(
+                        rs.getLong("id"),
+                        UUID.fromString(rs.getString("hash")),
+                        rs.getString("nome"),
+                        rs.getString("descricao"),
+                        rs.getString("ean13"),
+                        BigDecimal.valueOf(rs.getDouble("preco")),
+                        rs.getInt("quantidade"),
+                        rs.getInt("estoque_min"),
+                        rs.getTimestamp("dtcreate").toLocalDateTime(),
+                        dtupdate,
+                        rs.getBoolean("l_ativo")
+                );
+                produtos.add(produto);
+            }
+
+            rs.close();
+            sql.close();
+            return produtos;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

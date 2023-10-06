@@ -23,4 +23,6 @@ public interface ProdutoRepository {
     void excluir(Produto produto) throws SQLException;
 
     List<Produto> consultarTodos();
+
+    List<Produto> consultarTodosPorStatus(boolean statusProduto);
 }
