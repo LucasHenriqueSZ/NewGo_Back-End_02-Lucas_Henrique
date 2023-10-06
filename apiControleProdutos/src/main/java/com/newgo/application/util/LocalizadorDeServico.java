@@ -8,6 +8,7 @@ import com.newgo.infrastructure.conta.persistencia.ProdutoRepositoryPostgres;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Properties;
 
 public class LocalizadorDeServico {
@@ -20,8 +21,12 @@ public class LocalizadorDeServico {
         return new ConsultarTodosProdutos(produtoRepository());
     }
 
-    public static ParserProdutoURL parserURL(String recurso) {
-        return new ParserProdutoURL(recurso);
+    public static ConsultarTodosProdutosPorStatus consultarTodosProdutosPorStatus() throws SQLException {
+        return new ConsultarTodosProdutosPorStatus(produtoRepository());
+    }
+
+    public static ParserProdutoURL parserURL(String recurso, HashMap<String, String> queryParameters) {
+        return new ParserProdutoURL(recurso, queryParameters);
     }
 
     private static ProdutoRepository produtoRepository() throws SQLException {
