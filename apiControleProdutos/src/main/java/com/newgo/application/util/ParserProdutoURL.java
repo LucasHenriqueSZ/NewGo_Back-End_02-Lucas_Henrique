@@ -1,10 +1,15 @@
 package com.newgo.application.util;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class ParserProdutoURL {
 
     private final String recurso;
+    private final HashMap<String, String> queryParameters;
+    private String filtro;
     private boolean encontrado;
 
     private AcoesEndpoints acao;
@@ -12,12 +17,16 @@ public class ParserProdutoURL {
 
     private String statusProduto;
 
-    public ParserProdutoURL(String recurso) {
+    public ParserProdutoURL(String recurso, HashMap<String, String> queryParameters) {
         this.recurso = Objects.requireNonNull(recurso, "O recurso é obrigatório");
+        this.queryParameters = queryParameters;
         processarRecurso();
     }
 
     private void processarRecurso() {
+
+        verificarFiltros();
+
         String[] recursos = recurso.split("/");
 
         encontrado = recursos[1].equalsIgnoreCase("produtos");
@@ -32,7 +41,35 @@ public class ParserProdutoURL {
         verificarAcaoEndpoint(hashProd, acaoProd);
     }
 
+    private void verificarFiltros() {
+        if (queryParameters == null || queryParameters.isEmpty()) {
+            return;
+        }
+
+        List<String> filtrosInvalidos = new ArrayList<>();
+        for (String queryParameter : queryParameters.keySet()) {
+            if (queryParameter.equalsIgnoreCase("statusProduto")) {
+                if (filtro != null) {
+                    throw new IllegalArgumentException("Só é possivel utilizar um filtro por vez. " +
+                            "Filtro(s) inválido(s): " + queryParameter);
+                }
+                filtro = queryParameters.get(queryParameter).toLowerCase();
+            } else {
+                filtrosInvalidos.add(queryParameter);
+            }
+        }
+
+        if (!filtrosInvalidos.isEmpty())
+            throw new IllegalArgumentException("Filtro(s) inválido(s): " + filtrosInvalidos);
+    }
+
     private void verificarAcaoEndpoint(String hashProd, String acaoProd) {
+        if (hashProd == null && acaoProd == null && filtro != null) {
+            acao = AcoesEndpoints.PRODUTOS_FILTRADOS;
+            return;
+        }
+
+
         if (hashProd == null && acaoProd == null) {
             acao = AcoesEndpoints.PRODUTOS;
             return;
@@ -64,6 +101,10 @@ public class ParserProdutoURL {
         return statusProduto;
     }
 
+    public String getFiltro() {
+        return filtro;
+    }
+
     public boolean encontrado() {
         return encontrado;
     }
@@ -78,6 +119,10 @@ public class ParserProdutoURL {
 
     public boolean endpointAlterarStatusProduto() {
         return acao == AcoesEndpoints.ALTERAR_STATUS_PRODUTO;
+    }
+
+    public boolean endpointProdutosFiltrados() {
+        return acao == AcoesEndpoints.PRODUTOS_FILTRADOS;
     }
 
 }
